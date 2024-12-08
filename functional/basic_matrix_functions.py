@@ -74,5 +74,6 @@ def find_vector_y_default(x, a):
 
 def normalize(A):
     X = A.copy()
-    X = (X.T / ((X.T).sum(0) - 1)).T
+    X = (X.T / (np.abs(X.T).sum(0)-1)).T
+
     return X
