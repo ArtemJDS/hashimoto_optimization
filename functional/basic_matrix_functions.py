@@ -28,6 +28,9 @@ def create_sbm_matrix(N, m, w_ins, w_outs, seed):
     adjacency_matrix = adjacency_matrix.astype(int)
     return adjacency_matrix
 
+def get_normalization_value(i,j, C):
+    return np.sum(C[j]) - C[j,i]
+
 def construct_non_backtracking_matrix_parallel(A, flow = True):
 
     N = A.shape[0] 
@@ -50,17 +53,15 @@ def construct_non_backtracking_matrix_parallel(A, flow = True):
 
     B = np.zeros((num_edges, num_edges), dtype=np.complex128)
 
-    coefs = np.sum(A, axis = 1) - 1
     for idx1 in range(num_edges):
         i, j = edges[idx1, 0], edges[idx1, 1]
         for idx2 in range(num_edges):
             k, l = edges[idx2, 0], edges[idx2, 1]
-            if i == l and j != k:
-                if flow is True:
-                    B[idx1, idx2] = A[k,l] / coefs[i] 
+            if j == k and l != i:
+                if flow:
+                    B[idx1, idx2] = A[k,l] /  get_normalization_value(i, j, A)
                 else:
                     B[idx1, idx2] = A[k,l]
-
     return B
 
 def check_symmetric(a, rtol=1e-05, atol=1e-08):
@@ -71,9 +72,3 @@ def find_vector_y_default(x, a):
     k = a / norm_x_squared
     y = k * x
     return y
-
-def normalize(A):
-    X = A.copy()
-    X = (X.T / (np.abs(X.T).sum(0)-1)).T
-
-    return X

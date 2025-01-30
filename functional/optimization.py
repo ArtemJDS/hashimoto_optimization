@@ -1,6 +1,6 @@
 import numpy as np
 from functional.pseudohashimoto import compute_M, compute_M_weighted
-from functional.basic_matrix_functions import find_vector_y_default, normalize
+from functional.basic_matrix_functions import find_vector_y_default
 from scipy.optimize import minimize 
 
 class Optimizer:
@@ -22,6 +22,7 @@ class Optimizer:
 
         C_matrix = C_flat.reshape((n, n))
         # C_matrix = (C_matrix + C_matrix.T)/2
+
         loss = 0
         for u, K in zip(us, Ks):
             M_C_star = compute_M(u, C_matrix)
@@ -31,7 +32,8 @@ class Optimizer:
         if l < self.best[0]:
             self.best = (l,C_matrix, M_C_star, M_C, K)
             print(l)
-        
+        C_matrix = np.clip(C_matrix, 0, None)
+        # C_matrix = normalize(C_matrix)        
         return l
 
     def optimization(self):
