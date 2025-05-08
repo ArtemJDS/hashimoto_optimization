@@ -21,7 +21,7 @@ def compute_M(u, C):
     return I - A + D
 
 def compute_A_weighted(u, C_sm, C_sk):
-    A = np.zeros_like(C_sm)
+    A = np.zeros_like(C_sm, complex)
     l = A.shape[0]
     for i in range(l):
          for j in range(l):
@@ -38,7 +38,7 @@ def compute_D_weighted(u, C_sm, C_sk):
     return D
 
 def compute_M_weighted(u, C):
-    C = normalize_adjacency_matrix(C)
+    # C = normalize_adjacency_matrix(C)
     C_sm, C_sk = get_symmetric_component(C), get_skew_symmetric_component(C)
     A = compute_A_weighted(u, C_sm, C_sk)
     D = compute_D_weighted(u, C_sm, C_sk)
